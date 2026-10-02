@@ -771,7 +771,7 @@ export class DesktopAppSnapManager {
     }
     if (this.#disposed || generation !== this.#guideSessionGeneration) return this.getState();
     this.#guidePaneQueue = [...new Set(permissions)]
-      .sort(
+      .toSorted(
         (left, right) =>
           APP_SNAP_PERMISSION_SETUP_ORDER.indexOf(left) -
           APP_SNAP_PERMISSION_SETUP_ORDER.indexOf(right),

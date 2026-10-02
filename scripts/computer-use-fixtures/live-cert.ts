@@ -268,7 +268,7 @@ function speedTable(): Array<{
     sorted[Math.min(sorted.length - 1, Math.max(0, Math.ceil(q * sorted.length) - 1))] ?? 0;
   return [...callTimings.entries()]
     .map(([tool, list]) => {
-      const sorted = [...list].sort((a, b) => a - b);
+      const sorted = [...list].toSorted((a, b) => a - b);
       return {
         tool,
         n: sorted.length,
@@ -277,7 +277,7 @@ function speedTable(): Array<{
         max: sorted[sorted.length - 1] ?? 0,
       };
     })
-    .sort((a, b) => a.tool.localeCompare(b.tool));
+    .toSorted((a, b) => a.tool.localeCompare(b.tool));
 }
 
 /** A reply is only OK when it carries no refusal/error surface at all. */
@@ -471,7 +471,7 @@ async function windowOfPid(pid: number): Promise<WinInfo | undefined> {
   for (let i = 0; i < 20; i++) {
     const candidates = (await listWindows(pid))
       .filter((w) => w.pid === pid && w.title.startsWith("Untitled"))
-      .sort((a, b) => (a.z_index ?? 999) - (b.z_index ?? 999));
+      .toSorted((a, b) => (a.z_index ?? 999) - (b.z_index ?? 999));
     if (candidates[0]) return candidates[0];
     await new Promise((r) => setTimeout(r, 400));
   }
@@ -832,7 +832,7 @@ end repeat`,
       for (let i = 0; i < 20 && launchPid === undefined; i++) {
         await new Promise((r) => setTimeout(r, 500));
         const calcWins = (await listWindows()).filter((w) => w.app_name?.includes("Calculator"));
-        const fresh = calcWins.sort((a, b) => (a.z_index ?? 999) - (b.z_index ?? 999));
+        const fresh = calcWins.toSorted((a, b) => (a.z_index ?? 999) - (b.z_index ?? 999));
         if (fresh[0]) {
           launchPid = fresh[0].pid;
           winNum = fresh[0].window_id;
@@ -842,7 +842,7 @@ end repeat`,
       }
       if (launchPid) spawnedPids.push(launchPid);
       if (launchPid !== undefined && listed === undefined) {
-        const candidates = (await listWindows(launchPid)).sort(
+        const candidates = (await listWindows(launchPid)).toSorted(
           (a, b) => (a.z_index ?? 999) - (b.z_index ?? 999),
         );
         listed =

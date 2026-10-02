@@ -2446,7 +2446,7 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
       } else {
         gatewaySessionLease?.release();
       }
-      throw new Error(message, { cause });
+      throw new Error(message, { cause: error });
     }
   }
 
@@ -3902,7 +3902,7 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
     }
     const eventPayload = gatewayTurnAuthorityRetired
       ? {
-          ...(this.readObject(notification.params) ?? {}),
+          ...this.readObject(notification.params),
           [AGENT_GATEWAY_TURN_AUTHORITY_RETIRED]: true,
         }
       : notification.params;
@@ -4636,17 +4636,7 @@ export class CodexAppServerManager extends EventEmitter<CodexAppServerManagerEve
       const turnIdRaw = this.readString(turn, "id") ?? `${threadIdRaw}:turn:${index + 1}`;
       const turnId = TurnId.makeUnsafe(turnIdRaw);
       const items = this.readArray(turn, "items") ?? [];
-      return {
-        id: turnId,
-        items,
-        ...(typeof turn.startedAt === "number" || typeof turn.startedAt === "string"
-          ? { startedAt: turn.startedAt }
-          : {}),
-        ...(typeof turn.completedAt === "number" || typeof turn.completedAt === "string"
-          ? { completedAt: turn.completedAt }
-          : {}),
-        ...(typeof turn.status === "string" ? { status: turn.status } : {}),
-      };
+      return Object.assign({id:turnId,items}, typeof turn.startedAt===`number`||typeof turn.startedAt===`string`?{startedAt:turn.startedAt}:{}, typeof turn.completedAt===`number`||typeof turn.completedAt===`string`?{completedAt:turn.completedAt}:{}, typeof turn.status===`string`?{status:turn.status}:{});
     });
 
     return {

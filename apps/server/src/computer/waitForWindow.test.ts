@@ -77,7 +77,7 @@ describe("launch window readiness", () => {
       { ...window, ...document },
       { ...window, id: "8", title: "Inspector", bounds: { x: 0, y: 0, width: 240, height: 160 } },
     ];
-    for (const candidates of [windows, [...windows].reverse()]) {
+    for (const candidates of [windows, [...windows].toReversed()]) {
       expect(
         await waitForWindow(async () => candidates, "Helium", 0, undefined, { checkInputReady }),
       ).toEqual({ window: null, windowStatus: "no_usable_window", windowReason: "ambiguous" });

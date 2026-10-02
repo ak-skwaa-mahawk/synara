@@ -690,19 +690,7 @@ export function parseAntigravityModelLines(output: string): ProviderListModelsRe
       );
     });
     const defaultEffort = DEFAULT_EFFORT_BY_MODEL[model] ?? efforts[0];
-    return {
-      slug: model,
-      name: model,
-      ...(efforts.length > 0
-        ? {
-            supportedReasoningEfforts: efforts.map((effort) => ({
-              value: effort,
-              label: effortLabel(effort),
-            })),
-            ...(defaultEffort ? { defaultReasoningEffort: defaultEffort } : {}),
-          }
-        : {}),
-    };
+    return Object.assign({slug:model,name:model}, efforts.length>0?{supportedReasoningEfforts:efforts.map(effort=>({value:effort,label:effortLabel(effort)})),...defaultEffort?{defaultReasoningEffort:defaultEffort}:{}}:{});
   });
 }
 
@@ -2349,7 +2337,7 @@ const makeAntigravityAdapter = (dependencies: AntigravityAdapterDependencies = {
         offer({
           ...base(context, { includeTurn: false }),
           type: "thread.started",
-          payload: { ...(conversationId ? { providerThreadId: conversationId } : {}) },
+          payload: (conversationId ? { providerThreadId: conversationId } : {}),
         } satisfies ProviderRuntimeEvent);
         return session;
       });

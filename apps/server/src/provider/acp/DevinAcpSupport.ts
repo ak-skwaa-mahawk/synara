@@ -424,7 +424,7 @@ export const makeDevinAcpRuntime = (
   Effect.gen(function* () {
     const providerEnvironment = {
       ...process.env,
-      ...(input.devinSettings?.environment ?? {}),
+      ...input.devinSettings?.environment,
     };
     const storedCredentials = yield* Effect.tryPromise(() =>
       readDevinStoredCredentials(providerEnvironment),
@@ -444,9 +444,9 @@ export const makeDevinAcpRuntime = (
         ),
         authPolicy: "on-demand",
         resolveAuthMethodId: (initializeResult) =>
-          resolveDevinAcpAuthMethodId(initializeResult, { ...(apiKey ? { apiKey } : {}) }),
+          resolveDevinAcpAuthMethodId(initializeResult, (apiKey ? { apiKey } : {})),
         validateInitializeResult: (initializeResult) =>
-          resolveDevinAcpAuthMethodId(initializeResult, { ...(apiKey ? { apiKey } : {}) }).pipe(
+          resolveDevinAcpAuthMethodId(initializeResult, (apiKey ? { apiKey } : {})).pipe(
             Effect.asVoid,
           ),
         authenticateMeta,

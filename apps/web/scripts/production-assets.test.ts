@@ -42,7 +42,7 @@ describe("production icon pruning", () => {
     }
     await pruneProductionIcons(f.publicDir, f.dist, [f.source, f.contracts]);
     for (const dir of CENTRAL_ICON_DIRECTORIES) {
-      expect((await fs.readdir(path.join(f.dist, dir))).sort()).toEqual([
+      expect((await fs.readdir(path.join(f.dist, dir))).toSorted()).toEqual([
         "bag.svg",
         "cloud.svg",
         "star.svg",

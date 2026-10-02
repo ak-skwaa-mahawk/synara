@@ -379,7 +379,7 @@ describe("agent gateway computer tools", () => {
     const captureSchema = capture?.inputSchema as {
       properties: Record<string, unknown>;
     };
-    expect(Object.keys(captureSchema.properties).sort()).toEqual(["max_dimension", "window_id"]);
+    expect(Object.keys(captureSchema.properties).toSorted()).toEqual(["max_dimension", "window_id"]);
   });
 
   it("spells out all three delivery verdicts once, in the shared notes", async () => {
@@ -4295,7 +4295,7 @@ describe("computer_get_state diff", () => {
           changed: unknown[];
         };
       };
-      expect(baseline.elementChanges.added.map((item) => item.label).sort()).toEqual([
+      expect(baseline.elementChanges.added.map((item) => item.label).toSorted()).toEqual([
         "Calculate",
         "Display",
       ]);

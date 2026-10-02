@@ -163,7 +163,7 @@ export function readNeweggPageDom(): NeweggPageEvidence {
     const ids = [...new Set(links.map((link) => link.id))];
     const title = links
       .filter((link) => link.id === ids[0])
-      .sort((a, b) => b.title.length - a.title.length)[0]?.title;
+      .toSorted((a, b) => b.title.length - a.title.length)[0]?.title;
     if (ids.length !== 1 || !title || title.length > 1024) {
       complete = false;
       return [];
@@ -486,7 +486,7 @@ export function createBrowserObserver(input: {
                 (url.hostname === "newegg.com" || url.hostname.endsWith(".newegg.com")) &&
                 !/account|signin|login|password|address|orderhistory/i.test(url.pathname);
         })
-        .sort((a, b) => {
+        .toSorted((a, b) => {
           const priority = (url: string) =>
             /checkout|payment|placeorder/i.test(new URL(url).pathname)
               ? 0

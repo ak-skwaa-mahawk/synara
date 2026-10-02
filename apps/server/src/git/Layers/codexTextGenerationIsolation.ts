@@ -295,7 +295,7 @@ function selectedProviderEnvironmentKeys(
       names.add(value);
     }
   }
-  return [...names].sort();
+  return [...names].toSorted();
 }
 
 /**

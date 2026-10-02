@@ -31,7 +31,7 @@ describe("createProviderInstallResetPatch", () => {
       openCodeServerPassword: "",
     });
 
-    expect(Object.keys(patch).sort()).toEqual(
+    expect(Object.keys(patch).toSorted()).toEqual(
       [
         "antigravityBinaryPath",
         "claudeBinaryPath",
@@ -55,7 +55,7 @@ describe("createProviderInstallResetPatch", () => {
         "piBinaryPath",
         "providerInstances",
         "selectedCodexAccountId",
-      ].sort(),
+      ].toSorted(),
     );
     expect(patch.openCodeServerPassword).toBe("");
   });

@@ -335,7 +335,7 @@ layer("ProjectAgentRepository", (it) => {
         const last = batch[batch.length - 1]!;
         cursor = { createdAt: last.createdAt, id: last.id };
       }
-      assert.deepEqual(delivered.sort(), rows.map((row) => row.id).sort());
+      assert.deepEqual(delivered.toSorted(), rows.map((row) => row.id).toSorted());
       // Re-inserting the same source_event_id dedupes to the stored row.
       const { inserted: deduped, event: dedupedEvent } = yield* repository.insertInboxEvent({
         id: ProjectInboxEventId.makeUnsafe("bbbb-0000-0000-0000-0000000000dd"),
@@ -373,7 +373,7 @@ layer("ProjectAgentRepository", (it) => {
           }),
         { concurrency: "unbounded" },
       );
-      const sequences = activities.map((activity) => activity.sequence).sort((a, b) => a - b);
+      const sequences = activities.map((activity) => activity.sequence).toSorted((a, b) => a - b);
       assert.deepEqual(
         sequences,
         Array.from({ length: 8 }, (_, index) => index + 1),

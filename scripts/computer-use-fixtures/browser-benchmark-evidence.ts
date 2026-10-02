@@ -102,7 +102,7 @@ export function parseNeweggPrice(text: string, currencyHint: string | null = nul
     .replace(/^\s*\$/, "")
     .trim();
   if (!/^(?:\d{1,3}(?:,\d{3})*|\d+)(?:\.\d{2})$/.test(stripped)) return null;
-  const cents = Number(stripped.replace(/[,\.]/g, ""));
+  const cents = Number(stripped.replace(/[,.]/g, ""));
   return Number.isSafeInteger(cents) && cents >= 0 && cents <= 10_000_000
     ? { minor: cents, currency: "USD" as const }
     : null;
@@ -485,7 +485,7 @@ export function parsePullRequestTitles(value: unknown): PullRequestTitle[] | nul
 }
 
 function sameTitles(a: PullRequestTitle[], b: PullRequestTitle[]): boolean {
-  const sorted = (items: PullRequestTitle[]) => [...items].sort((x, y) => x.number - y.number);
+  const sorted = (items: PullRequestTitle[]) => [...items].toSorted((x, y) => x.number - y.number);
   return JSON.stringify(sorted(a)) === JSON.stringify(sorted(b));
 }
 

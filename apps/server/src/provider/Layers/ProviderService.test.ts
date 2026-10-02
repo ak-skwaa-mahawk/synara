@@ -593,11 +593,9 @@ function makeProviderServiceLayer(
       : never;
   },
 ) {
-  const codex = makeFakeCodexAdapter("codex", {
-    ...(providers?.codexDidResumeSession
+  const codex = makeFakeCodexAdapter("codex", (providers?.codexDidResumeSession
       ? { didResumeSession: providers.codexDidResumeSession }
-      : {}),
-  });
+      : {}));
   const claude = makeFakeCodexAdapter("claudeAgent");
   const antigravity = makeFakeCodexAdapter("antigravity");
   const droid = makeFakeCodexAdapter("droid", { conversationRollback: "restart-session" });

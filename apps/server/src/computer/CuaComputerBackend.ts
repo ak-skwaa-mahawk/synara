@@ -866,18 +866,16 @@ export class CuaComputerBackend implements ComputerBackend {
   private async readWindows(includeKeyboardFocus = false): Promise<readonly ComputerWindow[]> {
     const data =
       (
-        await this.call("list_windows", {
-          ...((this.hostPlatform ?? process.platform) === "darwin" &&
+        await this.call("list_windows", ((this.hostPlatform ?? process.platform) === "darwin" &&
           (this.driverNativeRevision ?? 0) >= 37 &&
           includeKeyboardFocus
             ? { include_keyboard_focus: true }
-            : {}),
-        })
+            : {}))
       ).structuredContent ?? {};
     if (!Array.isArray(data.windows)) throw new Error("Invalid Cua window list.");
     const rows = data.windows
       .map(record)
-      .sort((a, b) => (number(b.z_index) || 0) - (number(a.z_index) || 0));
+      .toSorted((a, b) => (number(b.z_index) || 0) - (number(a.z_index) || 0));
     this.windows = rows
       .flatMap((w, i): ComputerWindow[] => {
         const pid = number(w.pid),

@@ -566,7 +566,7 @@ export function providerStartOptionsFromInstance(
       const claudeEnvironment =
         configDir || secureStorageDir
           ? {
-              ...(environment.environment ?? {}),
+              ...environment.environment,
               ...(configDir ? { CLAUDE_CONFIG_DIR: configDir } : {}),
               ...(secureStorageDir ? { CLAUDE_SECURESTORAGE_CONFIG_DIR: secureStorageDir } : {}),
             }

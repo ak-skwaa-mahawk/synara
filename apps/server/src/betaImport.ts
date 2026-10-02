@@ -303,7 +303,7 @@ function commitStagedImport(
     }
   } catch (error) {
     const rollbackErrors: string[] = [];
-    for (const { name, hadPrevious } of committed.reverse()) {
+    for (const { name, hadPrevious } of committed.toReversed()) {
       try {
         rmSync(join(targetStateDir, name), { recursive: true, force: true });
         if (hadPrevious) renameSync(join(backupDir, name), join(targetStateDir, name));

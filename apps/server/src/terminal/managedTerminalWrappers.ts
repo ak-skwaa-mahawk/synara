@@ -42,7 +42,7 @@ export interface ManagedTerminalProfile {
 const PROVIDER_PROFILE_MANIFEST_FILENAME = "provider-profiles.json";
 
 function shellQuote(value: string): string {
-  return `'${value.replaceAll("'", `'\"'\"'`)}'`;
+  return `'${value.replaceAll("'", `'"'"'`)}'`;
 }
 
 function buildHookOscSequence(eventType: TerminalAgentHookEventType): string {
@@ -59,7 +59,7 @@ else
 fi
 
 _synara_extract_event() {
-  printf '%s' "$_synara_hook_input" | sed -n "s/.*\\\"$1\\\"[[:space:]]*:[[:space:]]*\\\"\\([^\\\"]*\\)\\\".*/\\1/p" | head -n 1
+  printf '%s' "$_synara_hook_input" | sed -n "s/.*\\"$1\\"[[:space:]]*:[[:space:]]*\\"\\([^\\"]*\\)\\".*/\\1/p" | head -n 1
 }
 
 _synara_event="$(_synara_extract_event hook_event_name)"
@@ -300,16 +300,16 @@ export function buildProviderProfileWrapperScript(profile: ManagedTerminalProfil
     ? [
         "exec env -i \\",
         ...PROFILE_INHERITED_ENV_KEYS.map((name) =>
-          [`  ${name}=\"\${${name}:-}\" `, "\\"].join(""),
+          [`  ${name}="\${${name}:-}" `, "\\"].join(""),
         ),
         ...fixedEnvironment.map(([name, value]) =>
           [`  ${name}=${shellQuote(value)} `, "\\"].join(""),
         ),
-        `  ${shellQuote(profile.targetPath)} \"$@\"`,
+        `  ${shellQuote(profile.targetPath)} "$@"`,
       ]
     : [
         ...fixedEnvironment.map(([name, value]) => `export ${name}=${shellQuote(value)}`),
-        `exec ${shellQuote(profile.targetPath)} \"$@\"`,
+        `exec ${shellQuote(profile.targetPath)} "$@"`,
       ];
   return [
     "#!/bin/sh",

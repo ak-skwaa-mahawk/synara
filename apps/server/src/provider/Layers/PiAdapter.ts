@@ -4066,13 +4066,7 @@ const makePiAdapter = (options?: PiAdapterLiveOptions) =>
               skills: result.skills.map((skill) => {
                 const description = trimToUndefined(skill.description);
                 const scope = trimToUndefined(skill.sourceInfo.source);
-                return {
-                  name: skill.name,
-                  ...(description ? { description } : {}),
-                  path: skill.filePath,
-                  enabled: !skill.disableModelInvocation,
-                  ...(scope ? { scope } : {}),
-                };
+                return Object.assign({name:skill.name}, description?{description}:{}, {path:skill.filePath,enabled:!skill.disableModelInvocation}, scope?{scope}:{});
               }),
               source: "pi.sdk",
               cached: false,

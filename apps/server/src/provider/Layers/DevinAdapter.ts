@@ -770,7 +770,7 @@ export function makeCachedDevinModelDiscovery<E, R>(input: {
       readonly environment?: Readonly<Record<string, string>>;
     },
   ) => {
-    const childEnvironment = { ...process.env, ...(options?.environment ?? {}) };
+    const childEnvironment = { ...process.env, ...options?.environment };
     const resolvedBinaryPath = resolveDevinBinaryPath(binaryPath, { env: childEnvironment });
     const cacheKey = devinDiscoveryCacheKey({
       binaryPath: resolvedBinaryPath,
@@ -1149,20 +1149,7 @@ export function buildDevinStaticModelDescriptors(): ReadonlyArray<ProviderModelD
   return MODEL_OPTIONS_BY_PROVIDER.devin.map((modelDefinition) => {
     const caps = getModelCapabilities(PROVIDER, modelDefinition.slug);
     const modelVariants = getDevinStaticModelVariants(modelDefinition.slug);
-    return {
-      slug: modelDefinition.slug,
-      name: modelDefinition.name,
-      optionDescriptors: getProviderOptionDescriptors({
-        provider: PROVIDER,
-        caps,
-      }),
-      supportsFastMode: caps.supportsFastMode,
-      supportsThinkingToggle: caps.supportsThinkingToggle,
-      contextWindowOptions: caps.contextWindowOptions,
-      supportedReasoningEfforts: caps.reasoningEffortLevels,
-      defaultReasoningEffort: caps.reasoningEffortLevels.find((o) => o.isDefault)?.value,
-      ...(modelVariants ? { modelVariants } : {}),
-    };
+    return Object.assign({slug:modelDefinition.slug,name:modelDefinition.name,optionDescriptors:getProviderOptionDescriptors({provider:PROVIDER,caps}),supportsFastMode:caps.supportsFastMode,supportsThinkingToggle:caps.supportsThinkingToggle,contextWindowOptions:caps.contextWindowOptions,supportedReasoningEfforts:caps.reasoningEffortLevels,defaultReasoningEffort:caps.reasoningEffortLevels.find(o=>o.isDefault)?.value}, modelVariants?{modelVariants}:{});
   });
 }
 
@@ -1949,8 +1936,8 @@ export function makeDevinAdapter(
             input.modelSelection?.provider === PROVIDER ? input.modelSelection : undefined;
           const providerDevinOptions = readDevinProviderStartOptions(input.providerOptions);
           const configuredEnvironment = {
-            ...(devinSettings.environment ?? {}),
-            ...(providerDevinOptions?.environment ?? {}),
+            ...devinSettings.environment,
+            ...providerDevinOptions?.environment,
           };
           const providerEnvironment = {
             ...process.env,
@@ -3714,7 +3701,7 @@ export function makeDevinAdapter(
     const listModels: NonNullable<DevinAdapterShape["listModels"]> = (input) =>
       discoverDevinModels(
         resolveDevinBinaryPath(input.binaryPath?.trim() || devinSettings.binaryPath, {
-          env: { ...process.env, ...(input.environment ?? {}) },
+          env: { ...process.env, ...input.environment },
         }),
         {
           ...(input.instanceId ? { instanceId: input.instanceId } : {}),

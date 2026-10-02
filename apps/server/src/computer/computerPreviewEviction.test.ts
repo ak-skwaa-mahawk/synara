@@ -21,7 +21,7 @@ function evictionFixture(): {
 } {
   const calls: Array<{ method?: string }> = [];
   const request = vi.fn(async (_endpoint: string, req: Record<string, unknown>) => {
-    calls.push({ ...(typeof req.method === "string" ? { method: req.method } : {}) });
+    calls.push((typeof req.method === "string" ? { method: req.method } : {}));
     if (req.name === "check_permissions")
       return {
         ok: true,

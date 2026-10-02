@@ -128,7 +128,7 @@ async function collectPages(
     if (coverage.pageHasOlder !== Boolean(next)) throw new Error(`${name}: incomplete pagination`);
     if (!next)
       return {
-        rows: [...seenRows.values()].sort((a, b) => Number(a.sequence) - Number(b.sequence)),
+        rows: [...seenRows.values()].toSorted((a, b) => Number(a.sequence) - Number(b.sequence)),
         coverage: firstCoverage,
         pages: pageIndex + 1,
       };

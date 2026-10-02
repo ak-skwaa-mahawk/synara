@@ -352,11 +352,7 @@ function cursorCapabilities(input?: {
   const defaultEffort =
     input?.defaultEffort ?? (efforts.includes("high") ? "high" : efforts[efforts.length - 1]);
   return {
-    reasoningEffortLevels: efforts.map((value) => ({
-      value,
-      label: CURSOR_EFFORT_LABELS[value],
-      ...(value === defaultEffort ? { isDefault: true as const } : {}),
-    })),
+    reasoningEffortLevels: efforts.map((value) => (Object.assign({value,label:CURSOR_EFFORT_LABELS[value]}, value===defaultEffort?{isDefault:true as const}:{}))),
     supportsFastMode: input?.fast ?? false,
     supportsThinkingToggle: input?.thinking ?? false,
     promptInjectedEffortLevels: [],

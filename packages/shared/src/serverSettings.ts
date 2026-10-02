@@ -108,15 +108,9 @@ export function providerStartOptionsFromServerSettings(
       ...(providers.cursor.binaryPath ? { binaryPath: providers.cursor.binaryPath } : {}),
       ...(providers.cursor.apiEndpoint ? { apiEndpoint: providers.cursor.apiEndpoint } : {}),
     },
-    antigravity: {
-      ...(providers.antigravity.binaryPath ? { binaryPath: providers.antigravity.binaryPath } : {}),
-    },
-    grok: {
-      ...(providers.grok.binaryPath ? { binaryPath: providers.grok.binaryPath } : {}),
-    },
-    droid: {
-      ...(providers.droid.binaryPath ? { binaryPath: providers.droid.binaryPath } : {}),
-    },
+    antigravity: (providers.antigravity.binaryPath ? { binaryPath: providers.antigravity.binaryPath } : {}),
+    grok: (providers.grok.binaryPath ? { binaryPath: providers.grok.binaryPath } : {}),
+    droid: (providers.droid.binaryPath ? { binaryPath: providers.droid.binaryPath } : {}),
     opencode: {
       ...(providers.opencode.binaryPath ? { binaryPath: providers.opencode.binaryPath } : {}),
       ...(providers.opencode.serverUrl ? { serverUrl: providers.opencode.serverUrl } : {}),
@@ -126,9 +120,7 @@ export function providerStartOptionsFromServerSettings(
       ...(providers.pi.binaryPath ? { binaryPath: providers.pi.binaryPath } : {}),
       ...(providers.pi.agentDir ? { agentDir: providers.pi.agentDir } : {}),
     },
-    devin: {
-      ...(providers.devin.binaryPath ? { binaryPath: providers.devin.binaryPath } : {}),
-    },
+    devin: (providers.devin.binaryPath ? { binaryPath: providers.devin.binaryPath } : {}),
     omp: {
       ...(providers.omp.binaryPath ? { binaryPath: providers.omp.binaryPath } : {}),
       ...(providers.omp.agentDir ? { agentDir: providers.omp.agentDir } : {}),

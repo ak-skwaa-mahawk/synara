@@ -665,7 +665,7 @@ function parseOpenCodeCliModelJson(
     variants,
     supportedReasoningEfforts,
     ...(defaultReasoningEffort ? { defaultReasoningEffort } : {}),
-    ...(contextWindowOptions ?? {}),
+    ...contextWindowOptions,
   };
 }
 

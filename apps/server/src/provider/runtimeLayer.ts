@@ -106,9 +106,7 @@ export function makeServerProviderLayer(
       Layer.provideMerge(providerSessionDirectoryLayer),
       Layer.provide(Layer.succeed(ServerSettingsService, serverSettings)),
     );
-    const providerServiceLayer = makeDurableProviderServiceLive({
-      ...(canonicalEventLogger ? { canonicalEventLogger } : {}),
-    }).pipe(
+    const providerServiceLayer = makeDurableProviderServiceLive((canonicalEventLogger ? { canonicalEventLogger } : {})).pipe(
       Layer.provide(adapterRegistryLayer),
       Layer.provide(providerSessionDirectoryLayer),
       Layer.provide(ProviderRuntimeEventRepositoryLive),

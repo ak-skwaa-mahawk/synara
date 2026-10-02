@@ -315,8 +315,8 @@ describe("resolveVoiceTranscriptionTarget", () => {
     ).toBe("codex_alpha");
     expect(
       resolveVoiceTranscriptionTarget({
-        statuses: [...statuses].reverse(),
-        providerInstances: [...instances].reverse(),
+        statuses: [...statuses].toReversed(),
+        providerInstances: [...instances].toReversed(),
         selectedProvider: "grok",
         selectedProviderInstanceId: "grok",
       })?.instanceId,

@@ -118,7 +118,7 @@ export function makeResourceTracker(root: ResourceProcess) {
       }
     }
     owned = new Map([...selected].map(([pid, row]) => [pid, row.startedAt]));
-    return { rootState, processes: [...selected.values()].sort((a, b) => a.pid - b.pid) };
+    return { rootState, processes: [...selected.values()].toSorted((a, b) => a.pid - b.pid) };
   };
 }
 

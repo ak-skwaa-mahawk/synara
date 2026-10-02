@@ -19,13 +19,13 @@ const keys = [
   "synthetic-240hz-stepper:baseline",
   "synthetic-240hz-stepper:candidate",
 ];
-assert.deepEqual(Object.keys(summary).sort(), keys.toSorted());
+assert.deepEqual(Object.keys(summary).toSorted(), keys.toSorted());
 for (const key of keys) {
   const group = rows.filter((row) => `${row.scenario}:${row.variant}` === key);
   assert.equal(group.length, repeats);
   assert.equal(summary[key].runs, repeats);
   assert.deepEqual(
-    group.map((row) => row.repeat).sort((a, b) => a - b),
+    group.map((row) => row.repeat).toSorted((a, b) => a - b),
     Array.from({ length: repeats }, (_, i) => i),
   );
   for (const row of group) {

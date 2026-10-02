@@ -223,12 +223,7 @@ export function makeProjectImportHandlers(options: ProjectImportRouteOptions) {
             (!origins.has(session.key) && known.has(`${session.provider}:${session.id}`)),
         })),
       })),
-      sources: results.map(({ provider, providerInstanceId, accountLabel, error }) => ({
-        provider,
-        providerInstanceId,
-        ...(accountLabel !== undefined ? { accountLabel } : {}),
-        error,
-      })),
+      sources: results.map(({ provider, providerInstanceId, accountLabel, error }) => (Object.assign({provider,providerInstanceId}, accountLabel!==undefined?{accountLabel}:{}, {error}))),
     } satisfies ListProjectImportsResult;
   });
 

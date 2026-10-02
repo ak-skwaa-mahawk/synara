@@ -122,7 +122,7 @@ export function buildDroidAcpSpawnInput(
 ): AcpSpawnInput {
   const childEnvironment = {
     ...process.env,
-    ...(droidSettings?.environment ?? {}),
+    ...droidSettings?.environment,
   };
   const args = ["exec", "--output-format", "acp"];
   const appendSystemPrompt = droidSettings?.appendSystemPrompt?.trim();
@@ -180,7 +180,7 @@ export const makeDroidAcpRuntime = (
         resolveAuthMethodId: (initializeResult) =>
           resolveDroidAcpAuthMethodId(initializeResult, {
             ...process.env,
-            ...(input.droidSettings?.environment ?? {}),
+            ...input.droidSettings?.environment,
           }),
         authenticateMeta: { headless: true },
       }).pipe(

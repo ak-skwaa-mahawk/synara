@@ -243,7 +243,7 @@ function createMockOpenCodeRuntime(options?: {
         options?.children
           ? options.children(input)
           : { data: options?.childrenBySessionId?.[input.sessionID] ?? [] },
-      get: async () => ({ data: { directory: process.cwd(), ...(options?.session ?? {}) } }),
+      get: async () => ({ data: { directory: process.cwd(), ...options?.session } }),
       revert: async () => ({ data: null }),
       summarize: async () => ({ data: null }),
       fork: async (input: { sessionID: string }) => {
@@ -6385,7 +6385,7 @@ describe("OpenCode background subagent tasks", () => {
           id: "part-task-duplicate",
           callID: "call-duplicate",
           state: {
-            ...((part as { state?: Record<string, unknown> }).state ?? {}),
+            ...(part as { state?: Record<string, unknown> }).state,
             output:
               '<task id="child-session-1" state="running"><summary>Background task updated</summary></task>',
           },

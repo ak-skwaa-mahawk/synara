@@ -784,7 +784,7 @@ const makeServerSettings = Effect.gen(function* () {
     providerPasswords: ProviderPasswordSnapshots,
   ): Effect.Effect<void> =>
     Effect.gen(function* () {
-      for (const [name, previous] of [...providerSecrets].reverse()) {
+      for (const [name, previous] of [...providerSecrets].toReversed()) {
         yield* (
           previous === null ? secretStore.remove(name) : secretStore.set(name, previous)
         ).pipe(
@@ -797,7 +797,7 @@ const makeServerSettings = Effect.gen(function* () {
           ),
         );
       }
-      for (const [provider, previous] of [...providerPasswords].reverse()) {
+      for (const [provider, previous] of [...providerPasswords].toReversed()) {
         yield* providerCredentials.replaceServerPassword(provider, previous).pipe(
           Effect.catch((error) =>
             Effect.logWarning("failed to roll back provider server password", {

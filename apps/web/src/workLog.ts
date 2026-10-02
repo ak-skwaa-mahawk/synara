@@ -2856,13 +2856,7 @@ export function deriveTimelineEntries(
     createdAt: proposedPlan.createdAt,
     proposedPlan,
   }));
-  const workRows: TimelineEntry[] = visibleWorkEntries.map((entry) => ({
-    id: entry.id,
-    kind: "work",
-    createdAt: entry.createdAt,
-    ...(entry.sequence !== undefined ? { sequence: entry.sequence } : {}),
-    entry,
-  }));
+  const workRows: TimelineEntry[] = visibleWorkEntries.map((entry) => (Object.assign({id:entry.id,kind:`work`,createdAt:entry.createdAt}, entry.sequence!==undefined?{sequence:entry.sequence}:{}, {entry})));
 
   // Late tool completion/replay timestamps must not move an earlier turn's
   // work below a new user request and inflate that request's tool disclosure.

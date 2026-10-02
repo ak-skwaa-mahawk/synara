@@ -1119,7 +1119,7 @@ test("preserves composer keyboard ownership during browser navigation", async ()
           for (const popupKind of ["direct", "blank", "post"] as const) {
             const label = `${surface}/popup-${popupKind}`;
             await focusComposer(label, native);
-            const beforeIds = manager.getState({ threadId: f.threadId }).tabs.map((tab) => tab.id);
+            const beforeIds = new Set(manager.getState({ threadId: f.threadId }).tabs.map((tab) => tab.id));
             const popupUrl = url("/focus-popup");
             await contents.executeJavaScript(
               popupKind === "post"
@@ -1131,12 +1131,12 @@ test("preserves composer keyboard ownership during browser navigation", async ()
               () =>
                 manager
                   .getState({ threadId: f.threadId })
-                  .tabs.some((tab) => !beforeIds.includes(tab.id)),
+                  .tabs.some((tab) => !beforeIds.has(tab.id)),
               "popup creation",
             );
             const childTab = manager
               .getState({ threadId: f.threadId })
-              .tabs.find((tab) => !beforeIds.includes(tab.id))!;
+              .tabs.find((tab) => !beforeIds.has(tab.id))!;
             await waitFor(
               () => manager.getState({ threadId: f.threadId }).activeTabId === childTab.id,
               "popup activation",

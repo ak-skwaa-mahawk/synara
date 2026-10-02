@@ -122,7 +122,7 @@ export class BetterwrightNetworkGuard {
       } catch (rollbackError) {
         throw new AggregateError(
           [error, rollbackError],
-          "Browser proxy setup and recovery failed.",
+          "Browser proxy setup and recovery failed.", { cause: rollbackError },
         );
       }
       throw error;

@@ -1,0 +1,19 @@
+{
+  "name": "@synara/mcp-server",
+  "version": "1.0.0",
+  "description": "Model Context Protocol adapter for the ISST-TOFT Rust/Candle inference backend",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "synara-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --target node --outfile ./dist/index.js",
+    "start": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.0",
+    "@grpc/grpc-js": "^1.12.5",
+    "@grpc/proto-loader": "^0.7.13"
+  }
+}

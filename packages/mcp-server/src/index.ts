@@ -50,6 +50,37 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
       {
+        name: "update_peer_telemetry",
+        description: "Ingest live 8D operational telemetry for an edge peer node into the Tordial-GS state tracker.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            nodeId: { type: "string", description: "Node identifier (e.g. PEER-EDGE-01)" },
+            latencyMs: { type: "number", description: "Network round-trip latency in ms (default: 4.0)" },
+            queueDepth: { type: "number", description: "Worker queue depth (default: 1.0)" },
+            thermalHeadroom: { type: "number", description: "Thermal headroom fraction 0.0-1.0 (default: 0.05)" },
+            batteryReserve: { type: "number", description: "Battery capacity fraction 0.0-1.0 (default: 0.95)" },
+            packetLossRate: { type: "number", description: "Link packet loss rate (default: 0.01)" },
+            bandwidthCapacity: { type: "number", description: "Bandwidth capacity factor (default: 0.9)" },
+            memoryPressure: { type: "number", description: "Host memory pressure fraction (default: 0.2)" },
+            computeLoad: { type: "number", description: "Normalized compute utilization (default: 0.002)" },
+          },
+          required: ["nodeId"],
+        },
+      },
+      {
+        name: "get_settlement_status",
+        description: "Retrieve verifiable settlement audit records and certification status for a transaction from Tordial-GS.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            txId: { type: "string", description: "Unique transaction identifier to query" },
+          },
+          required: ["txId"],
+        },
+      },
+
+      {
         name: "route_edge_burst",
         description: "Route an autonomous agent burst across heterogeneous mesh nodes using ARM64 8D state-space optimization via Tordial-GS.",
         inputSchema: {
@@ -152,7 +183,71 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     });
   }
 
-    if (name === "route_edge_burst") {
+      if (name === "update_peer_telemetry") {
+    try {
+      const p = (request.params.arguments || {}) as any;
+      if (!p.nodeId) throw new Error("nodeId is required");
+      const telemetry = {
+        latencyMs: p.latencyMs ?? 4.0,
+        queueDepth: p.queueDepth ?? 1.0,
+        thermalHeadroom: p.thermalHeadroom ?? 0.05,
+        batteryReserve: p.batteryReserve ?? 0.95,
+        packetLossRate: p.packetLossRate ?? 0.01,
+        bandwidthCapacity: p.bandwidthCapacity ?? 0.9,
+        memoryPressure: p.memoryPressure ?? 0.2,
+        computeLoad: p.computeLoad ?? 0.002,
+      };
+
+      const res = await tordialClient.updateTelemetry(p.nodeId, telemetry);
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(res, null, 2),
+          },
+        ],
+      };
+    } catch (err: any) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({ error: err.message, status: "TELEMETRY_UPDATE_FAILED" }),
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+
+  if (name === "get_settlement_status") {
+    try {
+      const p = (request.params.arguments || {}) as any;
+      if (!p.txId) throw new Error("txId is required");
+
+      const res = await tordialClient.getSettlementStatus(p.txId);
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(res, null, 2),
+          },
+        ],
+      };
+    } catch (err: any) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({ error: err.message, status: "SETTLEMENT_QUERY_FAILED" }),
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+
+  if (name === "route_edge_burst") {
     try {
       const p = (request.params.arguments || {}) as any;
       const telemetry = {

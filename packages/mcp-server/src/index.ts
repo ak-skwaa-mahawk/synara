@@ -1,3 +1,4 @@
+import { TordialMeshClient } from "./tordialClient.mjs";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -24,6 +25,9 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 
 const protoDescriptor = grpc.loadPackageDefinition(packageDefinition) as any;
 const issttoft = protoDescriptor.issttoft;
+const TORDIAL_GRPC_ENDPOINT = process.env.TORDIAL_GRPC_ENDPOINT || "127.0.0.1:50055";
+const tordialClient = new TordialMeshClient(TORDIAL_GRPC_ENDPOINT);
+
 const client = new issttoft.InferenceService(
   GRPC_ENDPOINT,
   grpc.credentials.createInsecure()
@@ -45,6 +49,25 @@ const server = new Server(
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
+      {
+        name: "route_edge_burst",
+        description: "Route an autonomous agent burst across heterogeneous mesh nodes using ARM64 8D state-space optimization via Tordial-GS.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            budgetSats: { type: "number", description: "Budget in satoshis (default: 500)" },
+            latencyMs: { type: "number", description: "Network round-trip latency in ms (default: 4.0)" },
+            queueDepth: { type: "number", description: "Target node queue depth (default: 3.0)" },
+            thermalHeadroom: { type: "number", description: "Thermal headroom fraction (default: 0.01)" },
+            batteryReserve: { type: "number", description: "Battery capacity fraction (default: 0.02)" },
+            packetLossRate: { type: "number", description: "Link packet loss rate (default: 3.5)" },
+            bandwidthCapacity: { type: "number", description: "Bandwidth capacity factor (default: 0.98)" },
+            memoryPressure: { type: "number", description: "Host memory pressure fraction (default: 0.2)" },
+            computeLoad: { type: "number", description: "Normalized compute utilization (default: 0.002)" },
+            originNode: { type: "string", description: "Origin node ID (default: SYNARA-MCP-AGENT)" },
+          },
+        },
+      },
       {
         name: "encode_rad_hard_glyph",
         description:
@@ -127,6 +150,44 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }
       );
     });
+  }
+
+    if (name === "route_edge_burst") {
+    try {
+      const p = (request.params.arguments || {}) as any;
+      const telemetry = {
+        latencyMs: p.latencyMs ?? 4.0,
+        queueDepth: p.queueDepth ?? 3.0,
+        thermalHeadroom: p.thermalHeadroom ?? 0.01,
+        batteryReserve: p.batteryReserve ?? 0.02,
+        packetLossRate: p.packetLossRate ?? 3.5,
+        bandwidthCapacity: p.bandwidthCapacity ?? 0.98,
+        memoryPressure: p.memoryPressure ?? 0.2,
+        computeLoad: p.computeLoad ?? 0.002,
+      };
+      const budget = p.budgetSats ?? 500;
+      const origin = p.originNode ?? "SYNARA-MCP-AGENT";
+
+      const res = await tordialClient.routeBurst(telemetry, budget, origin);
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(res, null, 2),
+          },
+        ],
+      };
+    } catch (err: any) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({ error: err.message, status: "ROUTING_FAILED" }),
+          },
+        ],
+        isError: true,
+      };
+    }
   }
 
   if (name === "read_scrp_anchor") {

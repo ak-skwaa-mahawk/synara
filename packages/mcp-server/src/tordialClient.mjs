@@ -61,6 +61,14 @@ export class TordialMeshClient {
     });
   }
 
+  /**
+   * Establish a bidirectional streaming pipeline for continuous high-rate bursts.
+   * @returns {grpc.ClientDuplexStream} Duplex stream emitting RouteBurstResponse events.
+   */
+  createBurstStream() {
+    return this.client.StreamRouteBursts();
+  }
+
   close() {
     this.client.close();
   }

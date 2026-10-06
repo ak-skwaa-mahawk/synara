@@ -1,3 +1,4 @@
+import { spawn } from "child_process";
 import { TordialMeshClient } from "./tordialClient.mjs";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
@@ -129,6 +130,18 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {},
         },
       },
+      {
+        name: "validate_e8_geodesic",
+        description: "Validate E8 root routing stability using Moonshot Kimi-K3 / K2.7 deep reasoning with manifold drift coordinates.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            rootIndex: { type: "number", description: "E8 root index to validate (default: 12)" },
+            phaseDrift: { type: "number", description: "Phase drift coordinate (default: 0.002)" },
+            lyapunovExp: { type: "number", description: "Effective Lyapunov exponent (default: -6.992)" }
+          }
+        }
+      },
     ],
   };
 });
@@ -136,6 +149,47 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 // 2. Handle tool calls
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
+
+  if (name === "validate_e8_geodesic") {
+    const rootIndex = Number(args?.rootIndex ?? 12);
+    const phaseDrift = Number(args?.phaseDrift ?? 0.002);
+    const lyapunov = Number(args?.lyapunovExp ?? -6.992);
+
+    return new Promise((resolvePrompt) => {
+      const pyCode = `from core.mesh.reasoning_router import SovereignReasoningRouter; import json; r = SovereignReasoningRouter(); res = r.validate_e8_geodesic(${rootIndex}, ${phaseDrift}, ${lyapunov}); print(json.dumps(res))`;
+      const proc = spawn("python3", ["-c", pyCode], {
+        cwd: resolve(process.env.HOME || "/data/data/com.termux/files/home", "Tordial-GS"),
+        env: process.env
+      });
+
+      let stdout = "";
+      let stderr = "";
+      proc.stdout.on("data", (chunk) => { stdout += chunk.toString(); });
+      proc.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
+
+      proc.on("close", (code) => {
+        if (code !== 0) {
+          resolvePrompt({
+            content: [{ type: "text", text: JSON.stringify({ error: stderr || "Execution failed", code }, null, 2) }],
+            isError: true
+          });
+          return;
+        }
+
+        try {
+          const parsed = JSON.parse(stdout.trim());
+          resolvePrompt({
+            content: [{ type: "text", text: JSON.stringify(parsed, null, 2) }]
+          });
+        } catch (e) {
+          resolvePrompt({
+            content: [{ type: "text", text: stdout.trim() }]
+          });
+        }
+      });
+    });
+  }
+
 
   if (name === "encode_rad_hard_glyph") {
     const terrainData = (args?.terrain_data as number[]) || [0.1, 0.5, 0.9, 0.4];

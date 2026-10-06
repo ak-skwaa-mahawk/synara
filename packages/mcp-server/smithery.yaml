@@ -1,0 +1,15 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      grpcEndpoint:
+        type: string
+        default: "127.0.0.1:50051"
+        description: "gRPC endpoint address for the ISST-TOFT inference daemon"
+  command: "npx"
+  args:
+    - "-y"
+    - "@ak-skwaa-mahawk/synara-mcp"
+  env:
+    ISST_GRPC_ENDPOINT: "${config.grpcEndpoint}"

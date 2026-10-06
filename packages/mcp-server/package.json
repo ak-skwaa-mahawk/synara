@@ -1,10 +1,10 @@
 {
   "name": "@ak-skwaa-mahawk/synara-mcp",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Model Context Protocol adapter for the ISST-TOFT inference engine",
   "main": "dist/index.js",
   "bin": {
-    "synara-mcp": "./bin/synara-mcp.js"
+    "synara-mcp": "bin/synara-mcp.mjs"
   },
   "files": [
     "dist",

@@ -12,7 +12,7 @@ async function run() {
     packetLossRate: 0.002,
     bandwidthCapacity: 0.95,
     memoryPressure: 0.22,
-    computeLoad: 0.08,
+    computeLoad: 0.001,
   };
 
   try {

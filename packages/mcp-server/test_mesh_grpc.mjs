@@ -4,15 +4,16 @@ async function run() {
   console.log("[*] Initializing TordialMeshClient on 127.0.0.1:50055...");
   const client = new TordialMeshClient("127.0.0.1:50055");
 
+  // Calibrated vector identical to verified quickstart:
   const telemetrySample = {
-    latencyMs: 4.2,
-    queueDepth: 2.5,
-    thermalHeadroom: 0.015,
-    batteryReserve: 0.88,
-    packetLossRate: 0.002,
-    bandwidthCapacity: 0.95,
-    memoryPressure: 0.22,
-    computeLoad: 0.001,
+    latencyMs: 4.0,
+    queueDepth: 3.0,
+    thermalHeadroom: 0.01,
+    batteryReserve: 0.02,
+    packetLossRate: 3.5,
+    bandwidthCapacity: 0.98,
+    memoryPressure: 0.2,
+    computeLoad: 0.002,
   };
 
   try {
@@ -27,6 +28,7 @@ async function run() {
     console.log(`    Root Index        : #${result.decision.selected_root_index}`);
     console.log(`    Dispatch Weight   : ${parseFloat(result.decision.dispatch_weight).toFixed(4)}`);
     console.log(`    Mass Norm         : ${parseFloat(result.decision.mass_norm).toFixed(4)}`);
+    console.log(`    Phase Drift       : ${result.decision.phase_drift}`);
     console.log(`    Settled Balance   : ${result.settled_balance_status}`);
     console.log(`    Total RPC Latency : ${(t1 - t0).toFixed(2)} ms`);
     console.log(`    Core Compute Time : ${(result.process_duration_ns / 1000).toFixed(2)} µs`);
